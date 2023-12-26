@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
 
 import Home from "./pages/home/Home";
+import Settings from "./pages/settings/Settings";
 
 const App = () => {
   // const { user } = useSelector((state) => ({
@@ -14,17 +15,10 @@ const App = () => {
       {/* <Navbar /> */}
       <Routes>
         <Route path="/" element={<Register />} />
-        {/* <Route path="/login" element={<Login />} /> */}
-
         <Route path="/home" element={<Home />} />
+        <Route path="/settings" element={<Settings />} />
 
         {/* {user && (
-          <>
-            <Route path="/profile" element={<Profile />} />
-          </>
-        )}
-
-        {user && (
           <>
             <Route path="/projects/:id" element={<Project />} />
           </>

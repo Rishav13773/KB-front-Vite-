@@ -33,7 +33,7 @@ export function FolderModal() {
         </div>
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="username" className="text-right">
-            Bio
+            Description
           </Label>
           <Textarea
             placeholder="Description of your project"

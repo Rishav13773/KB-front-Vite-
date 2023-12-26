@@ -22,7 +22,7 @@ const NavMenu = () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-xs">Profile</DropdownMenuItem>
+          <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
           <DropdownMenuItem className="text-xs">Dashboard</DropdownMenuItem>
           <DropdownMenuItem className="text-xs">Logout</DropdownMenuItem>
         </DropdownMenuContent>
