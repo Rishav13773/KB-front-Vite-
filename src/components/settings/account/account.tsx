@@ -1,11 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+
 import { ChangeEvent, useState } from "react";
+import { Upload } from "lucide-react";
+
 import EmailUpdate from "./components/emailUpdate";
 
 const Account = () => {
@@ -85,7 +87,7 @@ const Account = () => {
           </div>
         </form>
       </section>
-
+      <Separator className="my-8" />
       {/* ///Email & Phone/// */}
       <EmailUpdate />
     </div>

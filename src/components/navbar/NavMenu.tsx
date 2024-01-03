@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const NavMenu = () => {
   return (
@@ -22,8 +23,13 @@ const NavMenu = () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
-          <DropdownMenuItem className="text-xs">Dashboard</DropdownMenuItem>
+          <Link to="/settings">
+            <DropdownMenuItem className="text-xs">Settings</DropdownMenuItem>
+          </Link>
+          <Link to="/home">
+            <DropdownMenuItem className="text-xs">Dashboard</DropdownMenuItem>
+          </Link>
+
           <DropdownMenuItem className="text-xs">Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

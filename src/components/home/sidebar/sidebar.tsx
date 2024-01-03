@@ -8,6 +8,7 @@ import { ProjectTable } from "../project-table/projectTable";
 import { UserItem } from "./components/user-item";
 import NewButton from "./components/new-button";
 import { Bookmark, Trash } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const Sidebar = () => {
   return (
@@ -20,6 +21,7 @@ const Sidebar = () => {
           <UserItem />
           <div className="flex flex-col items-start gap-1 w-full">
             <NewButton />
+            <Separator className="mt-4" />
             <p className="flex items-center gap-2 text-sm w-full hover:bg-primary/5 p-1 pl-2 text-muted-foreground hover:cursor-pointer">
               <Bookmark width={18} />
               Starred

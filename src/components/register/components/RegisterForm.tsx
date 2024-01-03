@@ -61,7 +61,7 @@ const RegisterForm = () => {
                       autoCorrect="off"
                     />
                   </div>
-                  <Button size="sm">Sign in </Button>
+                  <Button size="sm">Sign up </Button>
                 </div>
               </form>
               <div className="relative">

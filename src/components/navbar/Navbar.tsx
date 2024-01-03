@@ -6,7 +6,7 @@ import logolight from "../../assets/logo-light.svg";
 
 const Navbar = () => {
   return (
-    <div className=" justify-between fixed top-0 flex items-center w-full p-4 border-b bg-background z-[99999]">
+    <div className=" justify-between fixed top-0 flex items-center w-full p-4 border-b bg-background z-50">
       <div className="flex gap-2">
         <img className="dark:hidden" width={20} src={logodark} alt="" />
         <img className="hidden dark:block" width={20} src={logolight} alt="" />

@@ -1,4 +1,4 @@
-import { FileUp, Folder, FolderUp, Plus } from "lucide-react";
+import { FileUp, Folder, FolderUp, ListPlus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ const NewButton = () => {
                 size="sm"
                 className="button flex items-center gap-1 px-10 "
               >
-                <Plus className="text-xs new-icon " />
+                <ListPlus className="text-xs new-icon " />
                 New
               </Button>
             </div>
