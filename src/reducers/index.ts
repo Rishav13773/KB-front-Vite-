@@ -1,11 +1,13 @@
 import { combineReducers } from "redux";
-import { useReducer } from "./user/userReducer";
+import { userReducer, UserState } from "./user/userReducer";
 
-// import projectReducer from "./project/projectsReducer";
-// import loaderReducer from "./loader/loaderReducers";
+// Defining the RootState type
+export interface RootState {
+  user: UserState;
+}
 
 const rootReducer = combineReducers({
-  user: useReducer,
+  user: userReducer,
   // projects: projectReducer,
   // loader: loaderReducer,
 });

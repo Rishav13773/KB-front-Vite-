@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
 
 import Home from "./pages/home/Home";
 import Settings from "./pages/settings/Settings";
 import Project from "./pages/project/Project";
+import { RootState } from "./reducers";
 
 const App = () => {
-  // const { user } = useSelector((state) => ({
-  //   ...(state as Record<string, object>),
-  // }));
+  const userState = useSelector((state: RootState) => state.user);
+
+  console.log(userState);
   return (
     <div>
       {/* <Navbar /> */}
