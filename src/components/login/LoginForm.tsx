@@ -1,12 +1,82 @@
+//importing from the the react lib
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+//importing from the the third party lib
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { cn } from "@/lib/utils";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+//importing the files from the local
+import Captcha from "./Captcha/Captcha";
+import captchaImg from "../../assets/images/captcha.jpg";
 
 const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
   setVisible,
 }) => {
+  const {
+    register,
+    // setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const navigate = useNavigate();
+
+  // Captcha Function
+
+  const characters = "abcdefghijkABCDEFGHIJK123456789";
+
+  const generateCaptcha = (length) => {
+    let result = "";
+    const characterLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characterLength));
+    }
+    return result;
+  };
+
+  const [captchaString, setCaptchaString] = useState(generateCaptcha(6));
+
+  const verifyCaptcha = (captcha) => {
+    return captcha === captchaString;
+  };
+
+  const refreshCaptcha = () => {
+    setCaptchaString(generateCaptcha(6));
+  };
+
+  // Login Function
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      const isCaptchaValid = verifyCaptcha(data.captcha);
+      //checking the captcha value
+      if (!isCaptchaValid) {
+        setError("captcha", {
+          type: "manual",
+          message: "Captcha is not valid",
+        });
+        setCaptchaString(generateCaptcha(6));
+        return;
+      }
+
+      const { data: resp } = await axios.post(
+        "http://localhost:8000/login",
+        data
+      );
+      console.log("checkpoint 2 - response: ", resp);
+      setTimeout(() => {
+        Cookies.set("user", JSON.stringify(resp));
+        navigate("/home");
+      });
+    } catch (error) {
+      console.log("Error :", error);
+    }
+  });
   return (
     <>
       <Button
@@ -32,7 +102,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
           </p>
         </div>
         <div className={cn("grid gap-6 w-[300px] md:w-[350px]")}>
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="grid gap-2">
               <div className="grid gap-2">
                 <Label className="sr-only">Email</Label>
@@ -40,6 +110,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
                   id="email"
                   placeholder="name@example.com"
                   type="email"
+                  {...register("email")}
                   name="email"
                   autoCapitalize="none"
                   autoComplete="email"
@@ -50,11 +121,31 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
                   id="password"
                   placeholder="Enter your password"
                   type="password"
+                  {...register("password")}
                   name="password"
                   autoCapitalize="none"
                   autoComplete="password"
                   autoCorrect="off"
                 />
+
+                {/* Captcha */}
+                <div className="captcha_container">
+                  <Captcha imgSrc={captchaImg} captchaString={captchaString} />
+                  <Label className="sr-only">Captcha</Label>
+                  <Input
+                    id="captcha"
+                    type="text"
+                    {...register("captcha", {
+                      required: "Captcha is required",
+                    })}
+                    name="captcha"
+                    placeholder="Enter the Captcha"
+                  />
+                  {errors.captcha && <p>{errors.captcha.message}</p>}
+                  <Button size="sm" onClick={refreshCaptcha}>
+                    Refresh
+                  </Button>
+                </div>
               </div>
               <Button size="sm">Log in</Button>
             </div>
