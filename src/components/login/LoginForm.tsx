@@ -79,6 +79,9 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
   });
   return (
     <>
+      <div className="absolute left-4 top-5 md:hidden">
+        <h3 className="text-2xl font-bold">Base Inc</h3>
+      </div>
       <Button
         size="sm"
         variant="ghost"
