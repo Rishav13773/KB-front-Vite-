@@ -38,18 +38,18 @@ const NewButton = () => {
             forceMount
           >
             <DialogTrigger className="w-full">
-              <DropdownMenuItem className="text-xs flex gap-2">
+              <DropdownMenuItem className="text-xs flex gap-1">
                 <Folder width={15} />
-                New folder
+                New project
               </DropdownMenuItem>
             </DialogTrigger>
 
-            <DropdownMenuItem className="text-xs flex gap-2">
+            <DropdownMenuItem className="text-xs flex gap-1">
               <FolderUp width={15} />
               Upload folder
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="text-xs flex gap-2">
+            <DropdownMenuItem className="text-xs flex gap-1">
               <FileUp width={15} />
               Upload file
             </DropdownMenuItem>

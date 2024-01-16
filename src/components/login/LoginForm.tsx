@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 //importing the files from the local
 import Captcha from "./Captcha/Captcha";
 import captchaImg from "../../assets/images/captcha.jpg";
+import { useDispatch } from "react-redux";
 
 const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
   setVisible,
@@ -26,6 +27,8 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
   } = useForm<FormData>();
 
   const navigate = useNavigate();
+  //Redux dispatch
+  const dispatch = useDispatch();
 
   // Captcha Function
 
@@ -68,8 +71,11 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
         "http://localhost:8000/login",
         data
       );
+
+      const { message, ...rest } = resp;
       console.log("checkpoint 2 - response: ", resp);
       setTimeout(() => {
+        dispatch({ type: "REGISTER", payload: rest });
         Cookies.set("user", JSON.stringify(resp));
         navigate("/home");
       });

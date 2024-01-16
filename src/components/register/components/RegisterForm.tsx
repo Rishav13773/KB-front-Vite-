@@ -1,14 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 import LoginForm from "@/components/login/LoginForm";
 import { cn } from "@/lib/utils";
 
-import "./style.css";
 import { ArrowRight, Check } from "lucide-react";
+
+import "./style.css";
+import axios from "axios";
+
+import { RotatingLines } from "react-loader-spinner";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const [visible, setVisible] = useState(false);
@@ -18,6 +29,13 @@ const RegisterForm = () => {
   const formSteps = ["email", "username", "password", "confirmPassword"];
 
   const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
+
+  //Redux dispatch
+  const dispatch = useDispatch();
+  //Navigation
+  const navigate = useNavigate();
 
   //initial form data
   const formData = {
@@ -28,7 +46,78 @@ const RegisterForm = () => {
   };
 
   const [credentials, setCredentials] = useState(formData);
-  console.log(valid);
+
+  //Formatting Date and Time
+  const currentDate = new Date();
+
+  const options: any = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+    currentDate
+  );
+
+  //////////////API REQUEST///////
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+
+      if (credentials.confirmPassword !== credentials.password) {
+        toast("Password does not match, try again", {
+          description: formattedDate,
+          action: {
+            label: "close",
+            onClick: () => console.log("Undo"),
+          },
+        });
+        return;
+      }
+      setLoading(true);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/register`,
+        {
+          email: credentials.email,
+          username: credentials.username,
+          password: credentials.password,
+        }
+      );
+
+      const { message, ...rest } = response.data;
+      setTimeout(() => {
+        dispatch({ type: "REGISTER", payload: rest });
+        Cookies.set("user", JSON.stringify(rest));
+        navigate("/home");
+      }, 2000);
+
+      //TOASTER
+      toast(message, {
+        description: formattedDate,
+        action: {
+          label: "close",
+          onClick: () => console.log("Undo"),
+        },
+      });
+    } catch (error: unknown) {
+      setError(error.message);
+      setLoading(false);
+      console.log(error);
+      toast("Check your credentials and try again", {
+        description: formattedDate,
+        action: {
+          label: "close",
+          onClick: () => console.log("Undo"),
+        },
+      });
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (
@@ -112,15 +201,19 @@ const RegisterForm = () => {
 
               {/* ///DATA FORM START////// */}
               <div className={cn("grid gap-6 w-[300px] md:w-[350px]")}>
-                <form>
+                <form onSubmit={onSubmit}>
                   <div className="flex flex-col gap-2">
                     <Label>Enter your credentails*</Label>
                     <div className="flex flex-col md:flex-col lg:flex-row items-start gap-2">
                       <div className="flex flex-row md:flex-row items-center gap-2">
-                        {valid ? (
+                        {valid && !loading ? (
                           <Check width={15} color="green" />
-                        ) : (
+                        ) : !valid && !loading ? (
                           <ArrowRight width={15} />
+                        ) : (
+                          loading && (
+                            <RotatingLines width="15" strokeColor="grey" />
+                          )
                         )}
                         <Input
                           className="w-[200px] md:w-[200px]"
@@ -152,7 +245,7 @@ const RegisterForm = () => {
                           Continue
                         </Button>
                       ) : (
-                        <Button type="submit" size="sm">
+                        <Button disabled={loading} type="submit" size="sm">
                           Register
                         </Button>
                       )}
@@ -161,6 +254,7 @@ const RegisterForm = () => {
                 </form>
               </div>
             </div>
+
             <div className="w-[300px] md:w-[300px] lg:w-[400px] absolute bottom-0 mb-5">
               <p className="text-muted-foreground text-xs">
                 By creating an account, you agree to the{" "}
@@ -175,6 +269,7 @@ const RegisterForm = () => {
               </p>
             </div>
           </div>
+          <Toaster />
         </>
       )}
 
