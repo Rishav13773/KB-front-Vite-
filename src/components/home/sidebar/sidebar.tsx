@@ -9,6 +9,7 @@ import { UserItem } from "./components/user-item";
 import NewButton from "./components/new-button";
 import { Bookmark, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import MobileBar from "./mobile-bar";
 
 const Sidebar = () => {
   return (
@@ -16,7 +17,13 @@ const Sidebar = () => {
       direction="horizontal"
       className="min-h-[200px] max-w-full"
     >
-      <ResizablePanel defaultSize={12} minSize={12} maxSize={20}>
+      {/* //////Side panel for desktop/////// */}
+      <ResizablePanel
+        className="hidden md:block"
+        defaultSize={12}
+        minSize={12}
+        maxSize={20}
+      >
         <div className="flex flex-col h-full items-start justify-start gap-3 dark:bg-transparent bg-gray-100">
           <UserItem />
           <div className="flex flex-col items-start gap-1 w-full">
@@ -33,8 +40,14 @@ const Sidebar = () => {
           </div>
         </div>
       </ResizablePanel>
+
+      {/* ////Sidebar for mobile////// */}
+
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
+        {/* <div>
+          <MobileBar />
+        </div> */}
         <div className="flex h-full items-start justify-center p-6">
           <ProjectTable />
         </div>
