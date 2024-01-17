@@ -8,6 +8,7 @@ export interface RootState {
 
 const rootReducer = combineReducers({
   user: userReducer,
+
   // projects: projectReducer,
   // loader: loaderReducer,
 });

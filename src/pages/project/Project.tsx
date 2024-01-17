@@ -4,9 +4,9 @@ import DocPage from "@/components/project/page";
 const Project = () => {
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
 
-      <main className="pt-20">
+      <main>
         <DocPage />
       </main>
     </div>

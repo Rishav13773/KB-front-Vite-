@@ -29,7 +29,7 @@ interface File {
 
 
 const FileUploader: React.FC = () => {
-  const id = useParams(); // getting the project Id from the url string , by using the useParams Hook
+  const {id} = useParams(); // getting the project Id from the url string , by using the useParams Hook
   console.log("id from the id: ", id)
   const { user } = useSelector((state: RootState) => state); // getting the user state which was stored in the redux.
   const [files, setFiles] = useState<File[]>([]); // creating the files State to manage the state of files to upload file.
@@ -92,7 +92,7 @@ const FileUploader: React.FC = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/upload-to-cloudinary/${projectId}`,
+        `http://localhost:8000/upload-to-cloudinary/${id}`,
         formData,
         {
           headers: {
