@@ -1,53 +1,121 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux"; // Import useSelector from react-redux
+import { useParams } from "react-router-dom"; 
 
 import "./style.css";
-
-// Import React FilePond
 import { FilePond, registerPlugin } from "react-filepond";
 import { FilePondFile } from "filepond";
-
-// Import FilePond styles
-import "filepond/dist/filepond.min.css";
-
-// Import the Image EXIF Orientation and Image Preview plugins
-// Note: These need to be installed separately
-// `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation --save`
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 
-// Register the plugins
+// Import or define RootState and FileInfo
+import { RootState } from "path/to/your/rootState";
+import { FileInfo } from "path/to/your/fileInfo";
+
+
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
-interface FileInfo {
-  name: string;
-  size: number;
-  type: string;
-  // Add more properties as needed
+interface File {
+  id: string;
+  filename: string;
+  fileSize: number;
+  fileType: string;
+  file: Blob;
 }
 
-const FileUploader: React.FC = () => {
-  const [files, setFiles] = useState<FilePondFile[]>([]);
 
-  const handleUpload = () => {
-    // Make Axios POST request here
-    axios.post("/api/upload", { files: files }).then((response) => {
-      console.log("Files uploaded successfully:", response.data);
-      // Optionally, you can reset the files array after successful upload
-      setFiles([]);
+const FileUploader: React.FC = () => {
+  const id = useParams(); // getting the project Id from the url string , by using the useParams Hook
+  console.log("id from the id: ", id)
+  const { user } = useSelector((state: RootState) => state); // getting the user state which was stored in the redux.
+  const [files, setFiles] = useState<File[]>([]); // creating the files State to manage the state of files to upload file.
+
+  const handleUpload = async () => {
+    try {
+      const categorizedFiles = categorizeFiles(files);
+      await uploadFilesToCloudinary(categorizedFiles, id);
+      setFiles([]); // Clear files after successful upload
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
+  };
+
+  const categorizeFiles = (files: File[]) => {
+    const categorizedFiles: Record<string, File[]> = {
+      images: [],
+      videos: [],
+      docs: [],
+      miscellaneous: [],
+    };
+
+    files.forEach((file) => {
+      const fileType = file.fileType ? file.fileType.toLowerCase() : "";
+
+      if (fileType.startsWith("image")) {
+        categorizedFiles.images.push(file);
+      } else if (fileType.startsWith("video")) {
+        categorizedFiles.videos.push(file);
+      } else if (
+        fileType.endsWith("pdf") ||
+        fileType.endsWith("doc") ||
+        fileType.endsWith("docx")
+      ) {
+        categorizedFiles.docs.push(file);
+      } else {
+        categorizedFiles.miscellaneous.push(file);
+      }
     });
+
+    return categorizedFiles;
+  };
+
+  const uploadFilesToCloudinary = async (
+    categorizedFiles: Record<string, File[]>,
+    projectId: string
+  ) => {
+    const formData = new FormData();
+
+    for (const folderName of Object.keys(categorizedFiles)) {
+      const filesInFolder = categorizedFiles[folderName];
+
+      for (const { file } of filesInFolder) {
+        formData.append("files", file);
+      }
+
+      formData.append("folderName", folderName);
+      formData.append("userName", user.firstName);
+    }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/upload-to-cloudinary/${projectId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        console.log("Files uploaded successfully.");
+      } else {
+        console.error("Error uploading files.");
+      }
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
   };
 
   useEffect(() => {
-    // Extract relevant information from each file
     const fileInfo: FileInfo[] = files.map((file) => ({
-      name: file.filename || "", // Check if filename is available
+      name: file.filename || "",
       size: file.fileSize || 0,
       type: file.fileType || "",
-      // Add more properties as needed
     }));
 
     console.log(fileInfo);

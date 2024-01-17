@@ -1,4 +1,5 @@
 import artwork from "../../../assets/artwork.jpg";
+import "./style.css";
 
 const Section = () => {
   return (

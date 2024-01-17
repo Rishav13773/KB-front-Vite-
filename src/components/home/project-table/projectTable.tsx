@@ -318,7 +318,7 @@
 // }
 
 /* eslint-disable react-refresh/only-export-components */
-"use client";
+// "use client";
 
 import * as React from "react";
 import {
@@ -360,6 +360,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSelector } from "react-redux";
+import { RootState } from "@/reducers";
 
 export type Project = {
   id: string;
@@ -369,79 +371,79 @@ export type Project = {
   createdDate: string;
 };
 
-export const columns: ColumnDef<Project>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "projectName",
-    header: "Project Name",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("projectName")}</div>,
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
-  },
-  {
-    accessorKey: "createdBy",
-    header: "Created By",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("createdBy")}</div>,
-  },
-  {
-    accessorKey: "createdDate",
-    header: "Created Date",
-    cell: ({ row }) => <div className="text-right">{row.getValue("createdDate")}</div>,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const project = row.original;
+// export const columns: ColumnDef<Project>[] = [
+//   {
+//     id: "select",
+//     header: ({ table }) => (
+//       <Checkbox
+//         checked={
+//           table.getIsAllPageRowsSelected() ||
+//           (table.getIsSomePageRowsSelected() && "indeterminate")
+//         }
+//         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+//         aria-label="Select all"
+//       />
+//     ),
+//     cell: ({ row }) => (
+//       <Checkbox
+//         checked={row.getIsSelected()}
+//         onCheckedChange={(value) => row.toggleSelected(!!value)}
+//         aria-label="Select row"
+//       />
+//     ),
+//     enableSorting: false,
+//     enableHiding: false,
+//   },
+//   {
+//     accessorKey: "projectName",
+//     header: "Project Name",
+//     cell: ({ row }) => <div className="capitalize">{row.getValue("projectName")}</div>,
+//   },
+//   {
+//     accessorKey: "description",
+//     header: "Description",
+//     cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
+//   },
+//   {
+//     accessorKey: "createdBy",
+//     header: "Created By",
+//     cell: ({ row }) => <div className="lowercase">{row.getValue(`${user.firstName}`)}</div>,
+//   },
+//   {
+//     accessorKey: "createdDate",
+//     header: "Created Date",
+//     cell: ({ row }) => <div className="text-right">{row.getValue("createdAt")}</div>,
+//   },
+//   {
+//     id: "actions",
+//     enableHiding: false,
+//     cell: ({ row }) => {
+//       const project = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => console.log("Copy project ID:", project.id)}
-            >
-              Copy project ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit project</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+//       return (
+//         <DropdownMenu>
+//           <DropdownMenuTrigger asChild>
+//             <Button variant="ghost" className="h-8 w-8 p-0">
+//               <span className="sr-only">Open menu</span>
+//               <DotsHorizontalIcon className="h-4 w-4" />
+//             </Button>
+//           </DropdownMenuTrigger>
+//           <DropdownMenuContent align="end">
+//             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+//             <DropdownMenuItem
+//               onClick={() => console.log("Copy project ID:", project.id)}
+//             >
+//               Copy project ID
+//             </DropdownMenuItem>
+//             <DropdownMenuSeparator />
+//             <DropdownMenuItem>View details</DropdownMenuItem>
+//             <DropdownMenuItem>Edit project</DropdownMenuItem>
+//           </DropdownMenuContent>
+//         </DropdownMenu>
+//       );
+//     },
+//   },
+// ];
 
 export function ProjectTable() {
   const [projects, setProjects] = React.useState<Project[]>([]);
@@ -449,12 +451,17 @@ export function ProjectTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const user = useSelector((state:RootState)=>state.user);
+  const ceratedByName = user.firstName;
+  
+
+  console.log("consoling ceratedByName sate",ceratedByName)
 
   React.useEffect(() => {
     // Fetch projects when the component mounts
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:8000/getprojectbyid/6551eb3925da6ce8899d18a8");
+        const response = await fetch(`http://localhost:8000/getprojectbyid/${user.id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch projects");
         }
@@ -468,6 +475,87 @@ export function ProjectTable() {
     fetchData();
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
+  const columns: ColumnDef<Project>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "projectName",
+      header: "Project Name",
+      cell: ({ row }) => <div className="capitalize">{row.getValue("projectName")}</div>,
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
+    },
+    // {
+    //   accessorKey: "createdBy",
+    //   header: "Created By",
+    //   cell: ({ row }) => <div className="lowercase">{row.getValue(`${user.firstName}`)}</div>,
+    // },
+    {
+      accessorKey: "createdByName",
+      header: "Created By",
+      cell: ({ row }) => <div className="lowercase">{row.getValue("createdByName")}</div>,
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created Date",
+      cell: ({ row }) => <div className="text-right">{row.getValue("createdAt")}</div>,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const project = row.original;
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => console.log("Copy project ID:", project.id)}
+              >
+                Copy project ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View details</DropdownMenuItem>
+              <DropdownMenuItem>Edit project</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  
+  console.log("consoling columns: ", columns.ceratedByName)
   const table = useReactTable({
     data: projects,
     columns,
@@ -486,6 +574,7 @@ export function ProjectTable() {
       rowSelection,
     },
   });
+
 
   return (
         <div className="w-full">
