@@ -76,7 +76,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
       console.log("checkpoint 2 - response: ", resp);
       setTimeout(() => {
         dispatch({ type: "REGISTER", payload: rest });
-        Cookies.set("user", JSON.stringify(resp));
+        Cookies.set("user", JSON.stringify(rest));
         navigate("/home");
       });
     } catch (error) {

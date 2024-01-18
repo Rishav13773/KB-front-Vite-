@@ -1,5 +1,6 @@
+import Cookies from "js-cookie";
+
 export interface UserState {
-  // Defining the shape of  user state
   id: string;
   username: string;
   picture: string;
@@ -8,15 +9,19 @@ export interface UserState {
   verified: boolean;
 }
 
+const initialState: UserState = Cookies.get("user")
+  ? JSON.parse(Cookies.get("user")!)
+  : {
+      id: "",
+      username: "",
+      picture: "",
+      token: "",
+      details: undefined,
+      verified: false,
+    };
+
 export function userReducer(
-  state: UserState = {
-    id: "",
-    username: "",
-    picture: "",
-    token: "",
-    details: undefined,
-    verified: false,
-  },
+  state: UserState = initialState,
   action: { type: string; payload: object }
 ) {
   switch (action.type) {

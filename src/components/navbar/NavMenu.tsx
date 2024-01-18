@@ -10,7 +10,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Cookie } from "lucide-react";
 import Cookies from "js-cookie";
 
 const NavMenu = () => {
