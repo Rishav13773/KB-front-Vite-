@@ -12,6 +12,8 @@ import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import { Settings } from "lucide-react";
 
+import "./style.css";
+
 const UserDropdown = () => {
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -25,7 +27,7 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Settings width={16} />
+        <Settings className="set_icon" width={16} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
