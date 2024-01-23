@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux"; // Import useSelector from react-redux
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 
 import "./style.css";
 import { FilePond, registerPlugin } from "react-filepond";
@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { RootState } from "path/to/your/rootState";
 import { FileInfo } from "path/to/your/fileInfo";
 
-
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 interface File {
@@ -27,16 +26,17 @@ interface File {
   file: Blob;
 }
 
-
 const FileUploader: React.FC = () => {
-  const {id} = useParams(); // getting the project Id from the url string , by using the useParams Hook
-  console.log("id from the id: ", id)
+  const { id } = useParams(); // getting the project Id from the url string , by using the useParams Hook
+  console.log("id from the id: ", id);
   const { user } = useSelector((state: RootState) => state); // getting the user state which was stored in the redux.
   const [files, setFiles] = useState<File[]>([]); // creating the files State to manage the state of files to upload file.
 
+  console.log(user);
   const handleUpload = async () => {
     try {
       const categorizedFiles = categorizeFiles(files);
+      console.log("categorizedFiles", categorizeFiles);
       await uploadFilesToCloudinary(categorizedFiles, id);
       setFiles([]); // Clear files after successful upload
     } catch (error) {
@@ -87,7 +87,9 @@ const FileUploader: React.FC = () => {
       }
 
       formData.append("folderName", folderName);
-      formData.append("userName", user.firstName);
+      formData.append("username", user.username);
+
+      console.log("form", formData);
     }
 
     try {
