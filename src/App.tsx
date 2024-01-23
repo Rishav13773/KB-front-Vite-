@@ -9,6 +9,10 @@ import { RootState } from "./reducers";
 
 const App = () => {
   const userState = useSelector((state: RootState) => state.user);
+  
+  useEffect(() => {
+    localStorage.setItem('userKey', JSON.stringify(userState));
+  }, [userState]);
 
   console.log("User Redux State", userState);
 

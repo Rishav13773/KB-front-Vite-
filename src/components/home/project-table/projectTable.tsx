@@ -362,6 +362,7 @@ import {
 } from "@/components/ui/table";
 import { useSelector } from "react-redux";
 import { RootState } from "@/reducers";
+import { redirect } from "react-router-dom";
 
 export type Project = {
   id: string;
@@ -459,22 +460,30 @@ export function ProjectTable() {
 
   React.useEffect(() => {
     // Fetch projects when the component mounts
-    async function fetchData() {
-      try {
-        const response = await fetch(`http://localhost:8000/getprojectbyid/${user.id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch projects");
-        }
-        const projectsData = await response.json();
-        setProjects(projectsData);
-      } catch (error) {
-        console.error("Error fetching projects:", error.message);
-      }
+    if (!user) {
+      return redirect("/login")
     }
-
     fetchData();
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
+
+  async function fetchData() {
+    try {
+      const response = await fetch(`http://localhost:8000/getprojectbyid/${user.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch projects");
+      }
+      const projectsData = await response.json();
+
+      console.log("projectData : ", projectsData);
+
+      setProjects(projectsData);
+
+      console.log("state of projects : ", projects)
+    } catch (error) {
+      console.error("Error fetching projects:", error.message);
+    }
+  }
   const columns: ColumnDef<Project>[] = [
     {
       id: "select",

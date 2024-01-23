@@ -63,7 +63,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
           type: "manual",
           message: "Captcha is not valid",
         });
-        setCaptchaString(generateCaptcha(6));
+        refreshCaptcha();
         return;
       }
 
@@ -73,7 +73,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
       );
 
       const { message, ...rest } = resp;
-      console.log("checkpoint 2 - response: ", resp);
+      // console.log("checkpoint 2 - response: ", resp);
       setTimeout(() => {
         dispatch({ type: "REGISTER", payload: rest });
         Cookies.set("user", JSON.stringify(rest));
