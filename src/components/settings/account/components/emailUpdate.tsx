@@ -16,46 +16,47 @@ const EmailUpdate = () => {
 
   console.log(user);
 
-  const updateEmail = async () =>{
-      try{
-        const userId = user.id;
-        const userEmail = getValues("email");
+  const updateEmail = async (event) => {
+    try {
+      event.preventDefault();
+      const userId = user.id;
 
-        setValue("userId", userId);
+      console.log("userEmail: ", getValues("email"))
+      const formData = getValues();
 
-        const formData = getValues();
+      const emailResponse = await fetch(`http://localhost:8000/updateEmail/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-        const emailResponse = await fetch(`http://localhost:8000/updateEmail/${userId}`, {
-          method: "PUT",
-          headers : {
-            "Content-Type":"application/json,"
-          },
-          body : JSON.stringify(formData),
-        })
-        console.log("userEmail in emailUpdate: ", emailResponse);
+      console.log('userEmail in emailUpdate: ', emailResponse);
 
-      }catch(error){
-        console.log("Error Occurred", error);
-      }
-  }
+    } catch (error) {
+      console.log('Error Occurred', error);
+    }
+  };
 
-  const updatePhone = async () => {
+  const updatePhone = async (event) => {
     try{
+      event.preventDefault();
       const userId = user.id;
       const userPhoneNumber = getValues("phone");
 
-      setValue("userId", userId);
+      // setValue("userId", userId);
 
       const fromData = getValues();
 
-      const phoneResonse = await fetch(`http://localhost:8000/userPhone/${userId}`, {
+      const phoneResonse = await fetch(`http://localhost:8000/updatePhone/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type":"application/json",
         }, 
-        body : JSON.stringify(FormData),
+        body : JSON.stringify(fromData),
       })
-      console.log("userPhoneNumber in emailUpdate: ", phoneResonse)
+      console.log("userPhoneNumber in phoneUpdate: ", phoneResonse)
     }catch(error){
       console.log("Error Occurred", error)
     }

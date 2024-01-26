@@ -63,7 +63,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
           type: "manual",
           message: "Captcha is not valid",
         });
-        refreshCaptcha();
+        setCaptchaString(generateCaptcha(6));
         return;
       }
 
