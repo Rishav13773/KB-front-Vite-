@@ -34,27 +34,36 @@ const Account = () => {
     }
   };
 
+
   const updateProfile = async () => {
     try {
       const userId = user.id;
+      // console.log("getValues: ", getValues);
+      const formData = new FormData();
+  
+      // Append form data
+      formData.append("username", getValues("username"));
+      formData.append("firstName", getValues("firstName"));
+      formData.append("lastName", getValues("lastName"));
+      formData.append("bio", getValues("bio"));
+      formData.append("picture", getValues("picture")[0]); // Assuming "picture" is an array
 
-      const formData = getValues();
-
+      // console.log("formData: ", formData);
+  
       const userProfile = await fetch(
         `http://localhost:8000/profile/${userId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+          body: formData,
         }
       );
-      console.log("profile: ", userProfile);
+  
+      // console.log("profile: ", userProfile);
     } catch (error) {
       console.log("Error Occurred", error);
     }
   };
+  
 
   return (
     <div className="mt-6">
@@ -88,10 +97,10 @@ const Account = () => {
               </div>
             </label>
             <Input
-              id="fileInput"
+              id="picture"
               type="file"
-              name="file"
-              {...register("file")}
+              name="picture"
+              {...register("picture")}
               className="hidden"
               accept="image/*"
               onChange={handleFileChange}
