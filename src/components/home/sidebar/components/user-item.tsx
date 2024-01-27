@@ -11,8 +11,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "../../../ui/button";
+import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const UserItem = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove("user");
+    dispatch({ type: "LOGOUT" });
+    navigation("/");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -57,7 +69,7 @@ export const UserItem = () => {
           asChild
           className="w-full cursor-pointer text-muted-foreground text-xs flex justify-start"
         >
-          <Button variant="ghost" size="xs">
+          <Button variant="ghost" size="xs" onClick={handleLogout}>
             Log out
           </Button>
         </DropdownMenuItem>

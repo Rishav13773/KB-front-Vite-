@@ -1,4 +1,4 @@
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RootState } from "@/reducers";
 
-
-
 const EmailUpdate = () => {
-  const { register, getValues,setValue, formState:{error},} = useForm<FormData>();
-  const user = useSelector((state: RootState)=>state.user);
+  const {
+    register,
+    getValues,
+    setValue,
+    formState: { error },
+  } = useForm<FormData>();
+  const user = useSelector((state: RootState) => state.user);
 
   console.log(user);
 
@@ -21,26 +24,28 @@ const EmailUpdate = () => {
       event.preventDefault();
       const userId = user.id;
 
-      console.log("userEmail: ", getValues("email"))
+      console.log("userEmail: ", getValues("email"));
       const formData = getValues();
 
-      const emailResponse = await fetch(`http://localhost:8000/updateEmail/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const emailResponse = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/updateEmail/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      console.log('userEmail in emailUpdate: ', emailResponse);
-
+      console.log("userEmail in emailUpdate: ", emailResponse);
     } catch (error) {
-      console.log('Error Occurred', error);
+      console.log("Error Occurred", error);
     }
   };
 
   const updatePhone = async (event) => {
-    try{
+    try {
       event.preventDefault();
       const userId = user.id;
       const userPhoneNumber = getValues("phone");
@@ -49,16 +54,19 @@ const EmailUpdate = () => {
 
       const fromData = getValues();
 
-      const phoneResonse = await fetch(`http://localhost:8000/updatePhone/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type":"application/json",
-        }, 
-        body : JSON.stringify(fromData),
-      })
-      console.log("userPhoneNumber in phoneUpdate: ", phoneResonse)
-    }catch(error){
-      console.log("Error Occurred", error)
+      const phoneResonse = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/updatePhone/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fromData),
+        }
+      );
+      console.log("userPhoneNumber in phoneUpdate: ", phoneResonse);
+    } catch (error) {
+      console.log("Error Occurred", error);
     }
   };
 
@@ -83,7 +91,11 @@ const EmailUpdate = () => {
               placeholder="name@example.com"
               type="email"
             />
-            <Button onClick={updateEmail} className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
+            <Button
+              onClick={updateEmail}
+              className="w-20 mt-2 p-1 md:mt-0 sm:mt-0"
+              size="icon"
+            >
               Update
             </Button>
           </div>
@@ -101,7 +113,11 @@ const EmailUpdate = () => {
               {...register("phone")}
               placeholder="+91-9999999999"
             />
-            <Button onClick={updatePhone} className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
+            <Button
+              onClick={updatePhone}
+              className="w-20 mt-2 p-1 md:mt-0 sm:mt-0"
+              size="icon"
+            >
               Update
             </Button>
           </div>

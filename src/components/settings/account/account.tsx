@@ -41,7 +41,7 @@ const Account = () => {
       const formData = getValues();
 
       const userProfile = await fetch(
-        `http://localhost:8000/profile/${userId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`,
         {
           method: "POST",
           headers: {

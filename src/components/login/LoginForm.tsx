@@ -68,7 +68,7 @@ const LoginForm: React.FC<{ setVisible: (visible: boolean) => void }> = ({
       }
 
       const { data: resp } = await axios.post(
-        "http://localhost:8000/login",
+        `${import.meta.env.VITE_BACKEND_URL}/login`,
         data
       );
 

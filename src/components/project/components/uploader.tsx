@@ -31,8 +31,8 @@ const FileUploader: React.FC = () => {
   console.log("id from the id: ", id);
   const { user } = useSelector((state: RootState) => state); // getting the user state which was stored in the redux.
   const [files, setFiles] = useState<File[]>([]); // creating the files State to manage the state of files to upload file.
-  console.log("userName: ", user.username)
-  console.log("user: ", user)
+  console.log("userName: ", user.username);
+  console.log("user: ", user);
 
   // console.log(user);
   const handleUpload = async () => {
@@ -90,12 +90,11 @@ const FileUploader: React.FC = () => {
 
       formData.append("folderName", folderName);
       formData.append("username", user.username);
-
     }
     console.log("form", formData);
 
     try {
-      console.log("formData: ", formData.get("username"))
+      console.log("formData: ", formData.get("username"));
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/upload-to-cloudinary/${id}`,
         formData,
@@ -106,11 +105,12 @@ const FileUploader: React.FC = () => {
         }
       );
 
-      if (response.data.status === "success") {
-        console.log("Files uploaded successfully.");
-      } else {
-        console.error("Error uploading files.");
-      }
+      // if (response.data.status === "success") {
+      //   console.log("Files uploaded successfully.");
+
+      // } else {
+      //   console.error("Error uploading files.");
+      // }
     } catch (error) {
       console.error("Error uploading files:", error);
     }
@@ -127,25 +127,27 @@ const FileUploader: React.FC = () => {
   }, [files]);
 
   return (
-    <div>
-      <div className="filepond">
-        <FilePond
-          files={files}
-          onupdatefiles={setFiles}
-          allowMultiple={true}
-          maxFiles={5}
-          name="files"
-          allowImagePreview={false}
-          imagePreviewMaxHeight={100}
-          labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-        />
+    <>
+      <div>
+        <div className="filepond">
+          <FilePond
+            files={files}
+            onupdatefiles={setFiles}
+            allowMultiple={true}
+            maxFiles={5}
+            name="files"
+            allowImagePreview={false}
+            imagePreviewMaxHeight={100}
+            labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+          />
+        </div>
+        <div className="upload-btn">
+          <Button variant="outline" size="sm" onClick={handleUpload}>
+            Upload Files
+          </Button>
+        </div>
       </div>
-      <div className="upload-btn">
-        <Button variant="outline" size="sm" onClick={handleUpload}>
-          Upload Files
-        </Button>
-      </div>
-    </div>
+    </>
   );
 };
 
