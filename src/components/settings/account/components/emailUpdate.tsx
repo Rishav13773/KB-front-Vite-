@@ -1,14 +1,72 @@
+import {useForm} from "react-hook-form";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { RootState } from "@/reducers";
+
+
 
 const EmailUpdate = () => {
+  const { register, getValues,setValue, formState:{error},} = useForm<FormData>();
+  const user = useSelector((state: RootState)=>state.user);
+
+  console.log(user);
+
+  const updateEmail = async (event) => {
+    try {
+      event.preventDefault();
+      const userId = user.id;
+
+      console.log("userEmail: ", getValues("email"))
+      const formData = getValues();
+
+      const emailResponse = await fetch(`http://localhost:8000/updateEmail/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('userEmail in emailUpdate: ', emailResponse);
+
+    } catch (error) {
+      console.log('Error Occurred', error);
+    }
+  };
+
+  const updatePhone = async (event) => {
+    try{
+      event.preventDefault();
+      const userId = user.id;
+      const userPhoneNumber = getValues("phone");
+
+      // setValue("userId", userId);
+
+      const fromData = getValues();
+
+      const phoneResonse = await fetch(`http://localhost:8000/updatePhone/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type":"application/json",
+        }, 
+        body : JSON.stringify(fromData),
+      })
+      console.log("userPhoneNumber in phoneUpdate: ", phoneResonse)
+    }catch(error){
+      console.log("Error Occurred", error)
+    }
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold">Email and Phone</h2>
       <p className="text-xs text-muted-foreground mt-2">
-        Manage the email and phone you use to sign into Base and recieve
+        Manage the email and phone you use to sign into Base and receive
         notifications
       </p>
 
@@ -21,10 +79,11 @@ const EmailUpdate = () => {
             <Input
               id="email"
               name="email"
+              {...register("email")}
               placeholder="name@example.com"
               type="email"
             />
-            <Button className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
+            <Button onClick={updateEmail} className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
               Update
             </Button>
           </div>
@@ -39,9 +98,10 @@ const EmailUpdate = () => {
               id="phone"
               name="phone"
               type="number"
+              {...register("phone")}
               placeholder="+91-9999999999"
             />
-            <Button className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
+            <Button onClick={updatePhone} className="w-20 mt-2 p-1 md:mt-0 sm:mt-0" size="icon">
               Update
             </Button>
           </div>

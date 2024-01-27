@@ -6,12 +6,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
 import { ChangeEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+
 import { Upload } from "lucide-react";
 
 import EmailUpdate from "./components/emailUpdate";
+import { RootState } from "@/reducers";
 
 const Account = () => {
   const [image, setImage] = useState<string | null>(null);
+  const user = useSelector((state: RootState) => state.user);
+  const {
+    register,
+    getValues,
+    setValue,
+    formState: { error },
+    handleSubmit,
+  } = useForm<FormData>();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -19,6 +31,28 @@ const Account = () => {
       const file = files[0];
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
+    }
+  };
+
+  const updateProfile = async () => {
+    try {
+      const userId = user.id;
+
+      const formData = getValues();
+
+      const userProfile = await fetch(
+        `http://localhost:8000/profile/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      console.log("profile: ", userProfile);
+    } catch (error) {
+      console.log("Error Occurred", error);
     }
   };
 
@@ -35,6 +69,7 @@ const Account = () => {
 
         {/* ////PROFILE FORM///// */}
         <form
+          onSubmit={handleSubmit(updateProfile)}
           action=""
           className="flex flex-col gap-4 mt-4 md:flex-row sm:flex-row md:gap-10 sm:gap-10"
         >
@@ -55,6 +90,8 @@ const Account = () => {
             <Input
               id="fileInput"
               type="file"
+              name="file"
+              {...register("file")}
               className="hidden"
               accept="image/*"
               onChange={handleFileChange}
@@ -67,7 +104,30 @@ const Account = () => {
               <Input
                 id="username"
                 name="username"
+                {...register("username")}
                 placeholder="Enter your username"
+                type="text"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label>firstName</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                {...register("firstName")}
+                placeholder="Enter your firstName"
+                type="text"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label>lastName</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                {...register("lastName")}
+                placeholder="Enter your lastName"
                 type="text"
               />
             </div>
@@ -77,6 +137,7 @@ const Account = () => {
               <Textarea
                 id="bio"
                 name="bio"
+                {...register("bio")}
                 placeholder="Tell us a little bit about yourself"
               />
             </div>
