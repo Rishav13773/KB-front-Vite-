@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { File, Search } from "lucide-react";
 
@@ -6,28 +7,46 @@ import FileUploader from "./components/uploader";
 import UserLabel from "./components/user-label";
 import UserDropdown from "./components/user-dropdown";
 import { Separator } from "../ui/separator";
-import pdf from "./../../assets/pdf-file-icon.svg";
+
+import file_dark from "./../../assets/file-dark.svg";
+import file_light from "./../../assets/file-light.svg";
+import plus_dark from "./../../assets/plus-dark.svg";
+import plus_light from "./../../assets/plus-light.svg";
+
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import UploadModal from "../modals/upload-modal";
+import { useTheme } from "../theme-provider";
 
 //Blueprint of response data
-interface docsData {
-  url: [];
+type docsData = {
+  [x: string]: any;
+  urls: [
+    {
+      url: string;
+      size: number;
+      format: string;
+      fileName: string;
+    }
+  ];
   project: string;
-}
+};
 
 const DocPage = () => {
   const [data, setData] = useState<docsData>();
   const { id } = useParams();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const getData = async () => {
       const resposne = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/getdocumentByPid/${id}`
       );
-      console.log(resposne.data);
-      setData(resposne.data[0].urls); ///Need to get info from URLS
+      const newData = resposne.data[0].urls;
+      console.log(newData);
+      setData(newData);
     };
 
     getData();
@@ -60,16 +79,32 @@ const DocPage = () => {
           {!data ? (
             <FileUploader />
           ) : (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
               {data.map((itm: docsData) => (
-                <div className="bg-transparent border border-1 p-4 rounded-md w-50 h-auto flex flex-col items-center justify-center gap-4">
-                  <img width={100} src={pdf} alt="pdf" />
-                  <h5 className="text-xs">Hello.pdf</h5>
+                <div className="bg-transparent border border-1 p-4 rounded-md w-28 h-auto flex flex-col items-center justify-center gap-4">
+                  <img
+                    width={50}
+                    src={theme == "dark" ? file_light : file_dark}
+                    alt="pdf"
+                  />
+                  <h5 className="text-xs dark:text-white">{`${itm.fileName}.${itm.format}`}</h5>
                 </div>
               ))}
-              <div className="bg-transparent border border-1 p-4 rounded-md w-50 h-50 flex justify-center">
-                Add files
-              </div>
+
+              {/* ///Add Files///// */}
+              <Dialog>
+                <UploadModal />
+                <DialogTrigger>
+                  <div className="bg-transparent border border-1 p-4 rounded-md w-28 h-50 flex flex-col items-center gap-4 justify-center">
+                    <img
+                      width={50}
+                      src={theme == "dark" ? plus_light : plus_dark}
+                      alt="add"
+                    />
+                    <h5 className="text-xs dark:text-white">Add files</h5>
+                  </div>
+                </DialogTrigger>
+              </Dialog>
             </div>
           )}
         </div>

@@ -32,7 +32,7 @@ const FileUploader: React.FC = () => {
   const { user } = useSelector((state: RootState) => state); // getting the user state which was stored in the redux.
   const [files, setFiles] = useState<File[]>([]); // creating the files State to manage the state of files to upload file.
 
-  console.log(user);
+  // console.log(user);
   const handleUpload = async () => {
     try {
       const categorizedFiles = categorizeFiles(files);
@@ -94,7 +94,7 @@ const FileUploader: React.FC = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/upload-to-cloudinary/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/upload-to-cloudinary/${id}`,
         formData,
         {
           headers: {
