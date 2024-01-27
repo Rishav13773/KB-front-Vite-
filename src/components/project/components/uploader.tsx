@@ -80,6 +80,7 @@ const FileUploader: React.FC = () => {
     projectId: string
   ) => {
     const formData = new FormData();
+    formData.append("username", user.username);
 
     for (const folderName of Object.keys(categorizedFiles)) {
       const filesInFolder = categorizedFiles[folderName];
@@ -89,8 +90,9 @@ const FileUploader: React.FC = () => {
       }
 
       formData.append("folderName", folderName);
-      formData.append("username", user.username);
     }
+    
+
     console.log("form", formData);
 
     try {
