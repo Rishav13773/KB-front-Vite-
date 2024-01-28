@@ -71,7 +71,7 @@ export function ProjectTable() {
   const navigate = useNavigate();
   
 
-  console.log("consoling ceratedByName sate",ceratedByName)
+  console.log("consoling user.username sate", user.username, "ceratedByName: ", ceratedByName)
 
   React.useEffect(() => {
     // Fetch projects when the component mounts
@@ -151,12 +151,16 @@ export function ProjectTable() {
     {
       accessorKey: "createdByName",
       header: "Created By",
-      cell: ({ row }) => <div className="lowercase">{row.getValue("createdByName")}</div>,
+      cell: ({ row }) => <div className="CamelCase">{ceratedByName}</div>,
     },
     {
       accessorKey: "createdAt",
       header: "Created Date",
-      cell: ({ row }) => <div className="text-right">{row.getValue("createdAt")}</div>,
+      cell: ({ row }) => {
+        const rawDate = row.getValue("createdAt");
+        const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString('en-GB') : '';
+        return <div className="text-left">{formattedDate}</div>;
+      },
     },
     {
       id: "actions",
