@@ -17,7 +17,7 @@ const Home = () => {
     <div className="h-screen">
       <Navbar />
 
-      <div className="pt-20 h-full">
+      <div className="pt-[62px] h-full">
         <Sheet>
           <div className="md:hidden absolute top-10 left-0 mt-7 z-50">
             <SheetTrigger>
