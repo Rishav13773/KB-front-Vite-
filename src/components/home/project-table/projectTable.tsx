@@ -53,13 +53,6 @@ export type Project = {
 
 export function ProjectTable() {
   const [projects, setProjects] = React.useState<Project[]>([]);
-  // const [projects, setProjects] = React.useState<Array<{
-  //   id: string;
-  //   projectName: string;
-  //   description: string;
-  //   createdBy: string;
-  //   createdDate: string;
-  // }>>([]);
   
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);

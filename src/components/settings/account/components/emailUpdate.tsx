@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { RootState } from "@/reducers";
+import React from "react";
 
 const EmailUpdate = () => {
   const {
@@ -17,7 +18,12 @@ const EmailUpdate = () => {
   } = useForm<FormData>();
   const user = useSelector((state: RootState) => state.user);
 
-  console.log(user);
+  React.useEffect(()=>{
+    if (user) {
+    setValue("email", user.email);
+    setValue("phone", user.phoneNo);
+    }
+  },[user]);
 
   const updateEmail = async (event) => {
     try {
