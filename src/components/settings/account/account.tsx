@@ -7,16 +7,24 @@ import { Separator } from "@/components/ui/separator";
 
 import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Upload } from "lucide-react";
 
 import EmailUpdate from "./components/emailUpdate";
 import { RootState } from "@/reducers";
+import Cookies from "js-cookie";
+
+interface FormData {
+  picture: File;
+}
 
 const Account = () => {
   const [image, setImage] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  console.log("profile", user);
   const {
     register,
     getValues,
@@ -25,45 +33,47 @@ const Account = () => {
     handleSubmit,
   } = useForm<FormData>();
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      // Set the value of the "picture" field
+      setValue("picture", file);
     }
   };
-
 
   const updateProfile = async () => {
     try {
       const userId = user.id;
       // console.log("getValues: ", getValues);
       const formData = new FormData();
-  
+
       // Append form data
       formData.append("username", getValues("username"));
       formData.append("firstName", getValues("firstName"));
       formData.append("lastName", getValues("lastName"));
       formData.append("bio", getValues("bio"));
-      formData.append("picture", getValues("picture")[0]); // Assuming "picture" is an array
+      formData.append("picture", getValues("picture")); // Assuming "picture" is an array
 
       // console.log("formData: ", formData);
-  
+
       const userProfile = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/profile/${userId}`,
         {
           method: "POST",
           body: formData,
         }
-      );
-  
+      ).then(async (res) => {
+        // console.log(await res.json());
+        Cookies.set("user", JSON.stringify(await res.json()));
+        dispatch({ type: "PROFILE", payload: await res.json() });
+      });
+
       // console.log("profile: ", userProfile);
     } catch (error) {
       console.log("Error Occurred", error);
     }
   };
-  
 
   return (
     <div className="mt-6">
@@ -90,7 +100,7 @@ const Account = () => {
 
             <label
               className="absolute top-[21rem] ml-24 md:top-[19.5rem] md:ml-20 sm:top-[19.5rem] sm:ml-20"
-              htmlFor="fileInput"
+              htmlFor="picture"
             >
               <div className="bg-black p-4 rounded-full">
                 <Upload className="text-white" />

@@ -9,10 +9,13 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
+import { RootState } from "@/reducers";
 
 const NavMenu = () => {
+  const user = useSelector((state: RootState) => state.user);
+
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
@@ -27,7 +30,7 @@ const NavMenu = () => {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage src={user.picture} alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

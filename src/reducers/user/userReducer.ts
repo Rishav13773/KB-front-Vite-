@@ -2,6 +2,9 @@ import Cookies from "js-cookie";
 
 export interface UserState {
   id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
   username: string;
   picture: string;
   token: string;
@@ -13,6 +16,9 @@ const initialState: UserState = Cookies.get("user")
   ? JSON.parse(Cookies.get("user")!)
   : {
       id: "",
+      email: "",
+      firstName: "",
+      lastName: "",
       username: "",
       picture: "",
       token: "",
@@ -32,6 +38,21 @@ export function userReducer(
       // Reset the user state when logging out
       return {
         id: "",
+        email: "",
+        username: "",
+        picture: "",
+        token: "",
+        details: undefined,
+        verified: false,
+      };
+
+    case "PROFILE":
+      // Reset the user state when logging out
+      return {
+        id: "",
+        email: "",
+        firstName: "",
+        lastName: "",
         username: "",
         picture: "",
         token: "",
