@@ -10,6 +10,7 @@ export interface UserState {
   token: string;
   details: object;
   verified: boolean;
+  phoneNo: number;
 }
 
 const initialState: UserState = Cookies.get("user")
@@ -24,6 +25,7 @@ const initialState: UserState = Cookies.get("user")
       token: "",
       details: undefined,
       verified: false,
+      phoneNo:null,
     };
 
 export function userReducer(
@@ -44,21 +46,12 @@ export function userReducer(
         token: "",
         details: undefined,
         verified: false,
+        phoneNo:null,
       };
 
     case "PROFILE":
       // Reset the user state when logging out
-      return {
-        id: "",
-        email: "",
-        firstName: "",
-        lastName: "",
-        username: "",
-        picture: "",
-        token: "",
-        details: undefined,
-        verified: false,
-      };
+      return action.payload;
 
     default:
       return state;

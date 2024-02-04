@@ -61,13 +61,6 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
   revalidate,
 }) => {
   const [projects, setProjects] = React.useState<Project[]>([]);
-  // const [projects, setProjects] = React.useState<Array<{
-  //   id: string;
-  //   projectName: string;
-  //   description: string;
-  //   createdBy: string;
-  //   createdDate: string;
-  // }>>([]);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

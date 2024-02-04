@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
+import React from "react";
+
 import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,8 +25,8 @@ interface FormData {
 }
 
 const Account = () => {
-  const [image, setImage] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.user);
+  const [image, setImage] = useState<string | null>(user.picture || null);
   const dispatch = useDispatch();
 
   //Formatting Date and Time
@@ -45,6 +47,7 @@ const Account = () => {
   );
 
   console.log("profile", user);
+  console.log("userID", user.id, " or user._id", user._id);
   const {
     register,
     getValues,
@@ -53,18 +56,44 @@ const Account = () => {
     handleSubmit,
   } = useForm<FormData>();
 
+  console.log("picture: ", user.picture);
+  React.useEffect(() => {
+    // Check if user object is not empty
+    if (user) {
+      // Assuming your form fields match the user properties
+      setValue("username", user.username);
+      setValue("firstName", user.firstName);
+      setValue("lastName", user.lastName);
+      setValue("bio", user.details.bio);
+      setValue("picture", user.picture);
+      // ... set other form field values
+    }
+  }, [user]);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
 
     if (file) {
       // Set the value of the "picture" field
       setValue("picture", file);
+
+      // Read the selected file and set it to the image state
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+    // else {
+    //   // If no file is selected, use the image from user.picture
+    //   setImage(user.picture || null);
+    // }
   };
 
   const updateProfile = async () => {
     try {
       const userId = user.id;
+      console.log("userId", userId);
       // console.log("getValues: ", getValues);
       const formData = new FormData();
 
