@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
   CaretSortIcon,
@@ -42,6 +41,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/reducers";
 import { redirect, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export type Project = {
   id: string;
@@ -51,7 +51,15 @@ export type Project = {
   createdDate: string;
 };
 
-export function ProjectTable() {
+interface ProjectTableProps {
+  revalidate: boolean;
+  setReValidate: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ProjectTable: React.FC<ProjectTableProps> = ({
+  setReValidate,
+  revalidate,
+}) => {
   const [projects, setProjects] = React.useState<Project[]>([]);
   // const [projects, setProjects] = React.useState<Array<{
   //   id: string;
@@ -60,48 +68,75 @@ export function ProjectTable() {
   //   createdBy: string;
   //   createdDate: string;
   // }>>([]);
-  
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const user = useSelector((state:RootState)=>state.user);
+  const user = useSelector((state: RootState) => state.user);
   const ceratedByName = user.firstName;
 
   const navigate = useNavigate();
-  
 
-  console.log("consoling user.username sate", user.username, "ceratedByName: ", ceratedByName)
+  // console.log(
+  //   "consoling user.username sate",
+  //   user.username,
+  //   "ceratedByName: ",
+  //   ceratedByName
+  // );
 
   React.useEffect(() => {
     // Fetch projects when the component mounts
     if (!user) {
-      return redirect("/login")
+      return redirect("/login");
     }
     fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
-
+  }, [revalidate]); // Empty dependency array ensures the effect runs only once on mount
 
   async function fetchData() {
     try {
-      const response = await fetch(`http://localhost:8000/getprojectbyid/${user.id}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch projects");
-      }
-      const projectsData = await response.json();
+      const state = false;
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/getprojectbyid/${
+          user.id
+        }?state=${state}`
+      );
 
-      console.log("projectData : ", projectsData);
+      const projectsData = await response.data;
+
+      // console.log("projectData : ", projectsData);
 
       setProjects(projectsData);
 
-      console.log(" state Projects:", projects);
-
+      // console.log(" state Projects:", projects);
     } catch (error) {
       console.error("Error fetching projects:", error.message);
     }
   }
 
+  const deleteProject = async (id: string) => {
+    console.log(id);
+    const state = true;
 
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/trashProject/${id}`,
+        { state }
+      );
+
+      const data = await response.data;
+      setReValidate((prev) => !prev);
+
+      fetchData();
+      // console.log(data);
+    } catch (error) {
+      console.error("Error deleting project:", error.message);
+      // Handle the error as needed, e.g., show an error message to the user
+    }
+  };
 
   const columns: ColumnDef<Project>[] = [
     // const columns: ColumnDef<Array<{
@@ -141,12 +176,21 @@ export function ProjectTable() {
     {
       accessorKey: "projectName",
       header: "Project Name",
-      cell: ({ row }) => <div className="capitalize" onClick={()=>navigate(`/projects/${row.original._id}`)}>{row.getValue("projectName")}</div>,
+      cell: ({ row }) => (
+        <div
+          className="capitalize"
+          onClick={() => navigate(`/projects/${row.original._id}`)}
+        >
+          {row.getValue("projectName")}
+        </div>
+      ),
     },
     {
       accessorKey: "description",
       header: "Description",
-      cell: ({ row }) => <div className="lowercase">{row.getValue("description")}</div>,
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("description")}</div>
+      ),
     },
     {
       accessorKey: "createdByName",
@@ -158,7 +202,9 @@ export function ProjectTable() {
       header: "Created Date",
       cell: ({ row }) => {
         const rawDate = row.getValue("createdAt");
-        const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString('en-GB') : '';
+        const formattedDate = rawDate
+          ? new Date(rawDate).toLocaleDateString("en-GB")
+          : "";
         return <div className="text-left">{formattedDate}</div>;
       },
     },
@@ -167,7 +213,7 @@ export function ProjectTable() {
       enableHiding: false,
       cell: ({ row }) => {
         const project = row.original;
-  
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -180,9 +226,9 @@ export function ProjectTable() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 // onClick={getProject(project._id)}
-                onClick={() => console.log("Copy project ID:", project._id)}
+                onClick={() => deleteProject(project._id)}
               >
-                Copy project ID
+                Delete
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View details</DropdownMenuItem>
@@ -194,8 +240,7 @@ export function ProjectTable() {
     },
   ];
 
-  
-  console.log("consoling columns: ", columns.ceratedByName)
+  console.log("consoling columns: ", columns.ceratedByName);
   const table = useReactTable({
     data: projects,
     columns,
@@ -215,119 +260,120 @@ export function ProjectTable() {
     },
   });
 
-
   return (
-        <div className="w-full">
-          <div className="flex items-center py-4">
-            <Input
-              placeholder="Filter emails..."
-              value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("email")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+    <div className="w-full">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter project name..."
+          value={
+            (table.getColumn("projectName")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("projectName")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
                           )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-      );
-    }
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};

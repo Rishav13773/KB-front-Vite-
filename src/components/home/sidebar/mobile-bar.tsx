@@ -13,7 +13,7 @@ const MobileBar = () => {
   return (
     <div>
       <SheetContent side="left">
-        <div className="flex flex-col h-full items-start justify-start gap-3 dark:bg-transparent bg-gray-100">
+        <div className="flex flex-col h-full items-start justify-start gap-3  ">
           <UserItem />
           <div className="flex flex-col items-start gap-1 w-full">
             <NewButton />

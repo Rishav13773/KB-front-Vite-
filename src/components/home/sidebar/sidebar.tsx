@@ -10,8 +10,13 @@ import NewButton from "./components/new-button";
 import { Bookmark, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import MobileBar from "./mobile-bar";
+import TrashItem from "./components/trash-item";
+import { useState } from "react";
 
 const Sidebar = () => {
+  const [revalidate, setReValidate] = useState(false);
+  console.log("revalidate", revalidate);
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -33,10 +38,7 @@ const Sidebar = () => {
               <Bookmark width={18} />
               Starred
             </p>
-            <p className="flex gap-2 items-center text-sm w-full hover:bg-primary/5 p-1 pl-2 text-muted-foreground hover:cursor-pointer">
-              <Trash width={18} />
-              Trash
-            </p>
+            <TrashItem revalidate={revalidate} setReValidate={setReValidate} />
           </div>
         </div>
       </ResizablePanel>
@@ -49,7 +51,7 @@ const Sidebar = () => {
           <MobileBar />
         </div> */}
         <div className="flex h-full items-start justify-center p-6">
-          <ProjectTable />
+          <ProjectTable revalidate={revalidate} setReValidate={setReValidate} />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
