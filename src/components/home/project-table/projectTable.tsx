@@ -41,7 +41,12 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/reducers";
 import { redirect, useNavigate } from "react-router-dom";
+
 import axios from "axios";
+import { toast } from "sonner";
+
+import { Check } from "lucide-react";
+import FilterDropdown from "./components/filter-drop";
 
 export type Project = {
   id: string;
@@ -72,6 +77,9 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
   const user = useSelector((state: RootState) => state.user);
   const ceratedByName = user.firstName;
 
+  const [star, setStar] = React.useState(false);
+  const [starFilter, setStarFilter] = React.useState(false);
+
   const navigate = useNavigate();
 
   // console.log(
@@ -86,8 +94,9 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
     if (!user) {
       return redirect("/login");
     }
+    console.log("starFilter", starFilter);
     fetchData();
-  }, [revalidate]); // Empty dependency array ensures the effect runs only once on mount
+  }, [revalidate, starFilter]); // Empty dependency array ensures the effect runs only once on mount
 
   async function fetchData() {
     try {
@@ -98,11 +107,15 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
         }?state=${state}`
       );
 
-      const projectsData = await response.data;
+      const data = await response.data;
 
-      // console.log("projectData : ", projectsData);
-
-      setProjects(projectsData);
+      if (starFilter) {
+        const projectData = data.filter((data: any) => data.starred == true);
+        setProjects(projectData);
+        console.log("projectData : ", projectData);
+      } else {
+        setProjects(data);
+      }
 
       // console.log(" state Projects:", projects);
     } catch (error) {
@@ -124,10 +137,30 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
       setReValidate((prev) => !prev);
 
       fetchData();
+      toast("Project trashed", {
+        icon: (
+          <Check className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
+      });
       // console.log(data);
     } catch (error) {
       console.error("Error deleting project:", error.message);
       // Handle the error as needed, e.g., show an error message to the user
+    }
+  };
+
+  const onStarred = async (id: string, state: boolean) => {
+    try {
+      const updatedStarState = !state;
+      setStar(updatedStarState);
+      console.log(star);
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/starredProject/${id}`,
+        { star: updatedStarState }
+      );
+      fetchData();
+    } catch (error) {
+      console.error("Error starring projects:", error.message);
     }
   };
 
@@ -171,7 +204,7 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
       header: "Project Name",
       cell: ({ row }) => (
         <div
-          className="capitalize"
+          className="capitalize cursor-pointer hover:underline"
           onClick={() => navigate(`/projects/${row.original._id}`)}
         >
           {row.getValue("projectName")}
@@ -226,6 +259,13 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem>View details</DropdownMenuItem>
               <DropdownMenuItem>Edit project</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onStarred(project._id, project.starred)}
+              >
+                {`${
+                  project.starred === true ? "Unstar project" : "Star project"
+                }`}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -266,6 +306,8 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
           }
           className="max-w-sm"
         />
+        <FilterDropdown setStarFilter={setStarFilter} />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

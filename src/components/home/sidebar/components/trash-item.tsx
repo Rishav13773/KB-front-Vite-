@@ -1,4 +1,4 @@
-import { Search, Trash, Undo } from "lucide-react";
+import { Check, Search, Trash, Undo, X } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import { RootState } from "@/reducers";
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export type Project = {
   id: string;
@@ -76,6 +77,11 @@ const TrashItem: React.FC<TrashProps> = ({
       setReValidate((prev) => !prev);
       fetchData();
 
+      toast("Project restored", {
+        icon: (
+          <Check className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
+      });
       // console.log(data);
     } catch (error) {
       console.error("Error deleting project:", error.message);
@@ -90,6 +96,12 @@ const TrashItem: React.FC<TrashProps> = ({
         `${import.meta.env.VITE_BACKEND_URL}/deletProject/${id}`
       );
       fetchData();
+
+      toast("Project deleted", {
+        icon: (
+          <Check className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
+      });
     } catch (error) {
       console.error("Error deleting project:", error.message);
     }

@@ -22,6 +22,7 @@ import { RootState } from "@/reducers";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Toaster } from "../ui/sonner";
+import { Check } from "lucide-react";
 
 export function FolderModal() {
   const projectInfo = {
@@ -79,10 +80,9 @@ export function FolderModal() {
 
       toast("Project created !", {
         description: formattedDate,
-        action: {
-          label: "close",
-          onClick: () => console.log("Undo"),
-        },
+        icon: (
+          <Check className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
       });
       setTimeout(() => {
         navigate(`/projects/${data.project._id}`);

@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import LoginForm from "@/components/login/LoginForm";
 import { cn } from "@/lib/utils";
 
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 
 import "./style.css";
 import axios from "axios";
@@ -71,11 +71,9 @@ const RegisterForm = () => {
 
       if (credentials.confirmPassword !== credentials.password) {
         toast("Password does not match, try again", {
-          description: formattedDate,
-          action: {
-            label: "close",
-            onClick: () => console.log("Undo"),
-          },
+          icon: (
+            <X className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+          ),
         });
         return;
       }
@@ -100,21 +98,18 @@ const RegisterForm = () => {
       //TOASTER
       toast(message, {
         description: formattedDate,
-        action: {
-          label: "close",
-          onClick: () => console.log("Undo"),
-        },
+        icon: (
+          <Check className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
       });
     } catch (error: unknown) {
       setError(error.message);
       setLoading(false);
       console.log(error);
-      toast("Check your credentials and try again", {
-        description: formattedDate,
-        action: {
-          label: "close",
-          onClick: () => console.log("Undo"),
-        },
+      toast("Check your credentails, try again", {
+        icon: (
+          <X className="w-4 h-4 dark:bg-white dark:text-black bg-black text-white rounded-full " />
+        ),
       });
     }
   };
