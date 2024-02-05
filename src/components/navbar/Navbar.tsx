@@ -1,8 +1,9 @@
 import { ModeToggle } from "../mode-toggle";
-import NavMenu from "./NavMenu";
+import NavMenu from "./components/NavMenu";
 
 import logodark from "../../assets/logo-dark.svg";
 import logolight from "../../assets/logo-light.svg";
+import Notification from "./components/Notification";
 
 const Navbar = () => {
   return (
@@ -13,7 +14,8 @@ const Navbar = () => {
         <p className="text-sm font-semibold">Base Inc.</p>
       </div>
 
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-6 items-center">
+        <Notification />
         <ModeToggle />
         <NavMenu />
       </div>

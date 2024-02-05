@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/navbar/navbar";
 import Account from "@/components/settings/account/account";
 
 const Settings = () => {

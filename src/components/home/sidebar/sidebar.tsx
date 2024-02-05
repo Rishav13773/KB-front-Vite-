@@ -13,6 +13,7 @@ import MobileBar from "./mobile-bar";
 import TrashItem from "./components/trash-item";
 import { useState } from "react";
 import StarredItem from "./components/starred-item";
+import Friends from "./components/friends-item";
 
 const Sidebar = () => {
   const [revalidate, setReValidate] = useState(false);
@@ -26,17 +27,21 @@ const Sidebar = () => {
       {/* //////Side panel for desktop/////// */}
       <ResizablePanel
         className="hidden md:block"
-        defaultSize={12}
-        minSize={12}
+        defaultSize={10}
+        minSize={13}
         maxSize={20}
       >
         <div className="flex flex-col h-full items-start justify-start gap-3 dark:bg-transparent bg-gray-100">
           <UserItem />
           <div className="flex flex-col items-start gap-1 w-full">
             <NewButton />
+
             <Separator className="mt-4" />
             <StarredItem />
             <TrashItem revalidate={revalidate} setReValidate={setReValidate} />
+
+            <Separator className="mt-[8rem]" />
+            <Friends />
           </div>
         </div>
       </ResizablePanel>

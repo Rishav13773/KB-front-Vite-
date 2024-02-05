@@ -7,6 +7,31 @@
   padding: 0px;
 }
 
+::-webkit-scrollbar {
+  height: 12px;
+  width: 10px;
+  background: #aaa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #83817c;
+  -webkit-border-radius: 1ex;
+  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+  background: #000;
+}
+
+.scrollable {
+  max-width: 200px;
+  max-height: 100%;
+
+  height: 450px;
+  /* change ` overflow: scroll ` to ` overflow: auto ` if you only want vertical scroll */
+  overflow: scroll;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -32,6 +57,18 @@
   }
 
   .dark {
+    ::-webkit-scrollbar {
+      height: 12px;
+      width: 10px;
+      background: #303030;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #acaba7;
+      -webkit-border-radius: 1ex;
+      -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+    }
+
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
     --card: 20 14.3% 4.1%;

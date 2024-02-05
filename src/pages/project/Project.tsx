@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/navbar/navbar";
 import DocPage from "@/components/project/page";
 
 const Project = () => {

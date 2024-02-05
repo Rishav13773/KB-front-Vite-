@@ -26,7 +26,7 @@ const Home = () => {
           </div>
           <MobileBar />
         </Sheet>
-        <Sidebar />
+        <Sidebar />N
       </div>
     </div>
   );

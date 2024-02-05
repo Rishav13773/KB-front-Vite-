@@ -32,7 +32,7 @@ const FilterDropdown: React.FC<FilterProps> = ({
           </DropdownMenuItem>
           <DropdownMenuItem
             className="font-semibold"
-            onClick={() => setStarFilter((prev) => !prev)}
+            onClick={() => setStarFilter(true)}
           >
             Starred
           </DropdownMenuItem>
